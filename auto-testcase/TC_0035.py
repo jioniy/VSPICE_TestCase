@@ -8,16 +8,16 @@ from selenium.common.exceptions import NoAlertPresentException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC 
-from login import login
 from datetime import datetime, timedelta
 import unittest, time, re
 import os
 import inspect
+import login_info as li
 import project_info as pi
 
 tc_file = inspect.getfile(inspect.currentframe())
 tc_num = os.path.splitext(tc_file)[0]
-tc_content = u"ACQ4의 책무/합의 템플릿을 다운로드 받을 경우, 'ACQ4_02-01_책무 합의.xlsx'파일이 다운로드 되어야 한다. "
+tc_content = u"프로젝트 생성 시 프로세스에 대해 작업 산출물 요청을 승인했을 경우, 프로세스 상세 페이지에서 '작업 산출물 승인 요청 사용 중'이라는 문구가 출력되어야 한다. "
 
 class UntitledTestCase(unittest.TestCase):
     def setUp(self):
@@ -41,10 +41,10 @@ class UntitledTestCase(unittest.TestCase):
         print("STEP 1 -- 프로젝트 세팅")
         
         print("STEP 1-1 -- 사용자 로그인 및 프로젝트 등록")
-        login(self, user_id, user_pw)
+        li.login(self, user_id, user_pw)
         
         # 프로젝트 생성
-        test_details += pi.project_essential_info(self, "GIT", "http://vpes@192.168.0.136:7990/scm/sprin/vpes.git", "vpes", "suresoft", project_name, "VPES_CAR")
+        test_details += pi.project_essential_info(self, "GIT", "http://vpes@192.168.0.136:7990/scm/sprin/vpes.git", "vpes", "suresoft", project_name, "V-SPICE_CAR")
         test_details += pi.project_process_info(self, True, True, True, True, True, True, True, True, True, True, True, True, True) # MAN 프로세스에 승인 요청 기능 사용
         test_details += pi.create_project(self)
         
@@ -154,7 +154,7 @@ class UntitledTestCase(unittest.TestCase):
 
 		
         data = '"' + tc_num + '"' + ',' + '"' + tc_content + '"' + ',' + '"' + test_result + '"' + ',' + '"' + test_details + '"'
-        command = 'echo ' + data + ' >> vpes_test_result.csv'
+        command = 'echo ' + data + ' >> vspice_test_result.csv'
         '''print(command)'''
         #os.system(command.encode(str('cp949')))
         os.system(command)

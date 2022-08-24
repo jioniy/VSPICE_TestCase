@@ -8,11 +8,11 @@ from selenium.common.exceptions import NoAlertPresentException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC 
-from login import login
 from datetime import datetime, timedelta
 import unittest, time, re
 import os
 import inspect
+import login_info as li
 import project_info as pi
 
 tc_file = inspect.getfile(inspect.currentframe())
@@ -41,20 +41,22 @@ class UntitledTestCase(unittest.TestCase):
         print("STEP 1 -- 프로젝트 세팅")
         
         print("STEP 1-1 -- 사용자 로그인 및 프로젝트 등록")
-        login(self, user_id, user_pw)
+        li.login(self, user_id, user_pw)
         
         # 프로젝트 생성
-        test_details += pi.project_essential_info(self, "GIT", "http://vpes@192.168.0.136:7990/scm/sprin/vpes.git", "vpes", "suresoft", project_name, "VPES_CAR")
+        test_details += pi.project_essential_info(self, "GIT", "http://vpes@192.168.0.136:7990/scm/sprin/vpes.git", "vpes", "suresoft", project_name, "V-SPICE_CAR")
         test_details += pi.create_project(self)
         
         time.sleep(2)
         
         print("STEP 1-2 -- 프로젝트 접속 후 WBS 페이지로 이동")
         pi.search_project(self, project_name)
-        driver.find_element_by_xpath("//a[@id='wbs-tab']/font").click() # WBS 페이지로 이동
+        driver.find_element_by_id('wbs-tab').click() # WBS 페이지로 이동
         time.sleep(3)
         
         print("STEP 2 -- WBS 작업 추가")
+        driver.execute_script("window.scrollTo(document.body.scrollWidth, 0);") 
+        time.sleep(1)
         driver.find_element_by_xpath("//div[@id='ChartVue']/div/div[2]/button/div/div/img").click() # 작업 추가 버튼 클릭
         time.sleep(1) 
         driver.find_element_by_xpath("//input[@type='text']").click()
@@ -180,7 +182,7 @@ class UntitledTestCase(unittest.TestCase):
 
 		
         data = '"' + tc_num + '"' + ',' + '"' + tc_content + '"' + ',' + '"' + test_result + '"' + ',' + '"' + test_details + '"'
-        command = 'echo ' + data + ' >> vpes_test_result.csv'
+        command = 'echo ' + data + ' >> vspice_test_result.csv'
         '''print(command)'''
         #os.system(command.encode(str('cp949')))
         os.system(command)

@@ -8,12 +8,12 @@ from selenium.common.exceptions import NoAlertPresentException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC 
-from login import login, logout
 from datetime import datetime, timedelta
 import unittest, time, re
 import os
 import inspect
 import project_info as pi
+import login_info as li
 
 
 tc_file = inspect.getfile(inspect.currentframe())
@@ -37,7 +37,7 @@ class UntitledTestCase(unittest.TestCase):
         project_name = "TC_0021"
         project_start_date = "2022-07-30"
         project_end_date = "2023-07-30"
-        project_car = "VPES_CAR"
+        project_car = "V-SPICE_CAR"
         project_item = "AA"
         project_chipset = "BB"
         project_toolchain = "CC"
@@ -47,7 +47,7 @@ class UntitledTestCase(unittest.TestCase):
         
         print("STEP 1 -- 프로젝트 세팅")
         print("STEP 1-1 -- 사용자 로그인 및 프로젝트 등록")
-        login(self, user_id, user_pw)
+        li.login(self, user_id, user_pw)
         
         test_details += pi.project_essential_info(self, "GIT", "http://vpes@192.168.0.136:7990/scm/sprin/vpes.git", "vpes", "suresoft", project_name, project_car, project_start_date, project_end_date)
         test_details += pi.project_extra_info(self, project_item, project_chipset, project_toolchain)
@@ -78,7 +78,7 @@ class UntitledTestCase(unittest.TestCase):
         
         print("STEP 3 -- 프로젝트 기간 확인")
         time.sleep(1)
-        date_to_string = project_start_date +"~"+project_end_date
+        date_to_string = project_start_date +" ~ "+project_end_date
         if driver.find_element_by_xpath("//div[@id='projectOverView-HeaderVue']/div/div[3]/div[2]").text == date_to_string:
             print("STEP 3 -- SUCCESS")
         else:
@@ -174,7 +174,7 @@ class UntitledTestCase(unittest.TestCase):
 
 		
         data = '"' + tc_num + '"' + ',' + '"' + tc_content + '"' + ',' + '"' + test_result + '"' + ',' + '"' + test_details + '"'
-        command = 'echo ' + data + ' >> vpes_test_result.csv'
+        command = 'echo ' + data + ' >> vspice_test_result.csv'
         '''print(command)'''
         #os.system(command.encode(str('cp949')))
         os.system(command)

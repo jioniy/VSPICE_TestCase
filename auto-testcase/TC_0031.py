@@ -8,11 +8,11 @@ from selenium.common.exceptions import NoAlertPresentException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC 
-from login import login
 from datetime import datetime, timedelta
 import unittest, time, re
 import os
 import inspect
+import login_info as li
 import project_info as pi
 
 tc_file = inspect.getfile(inspect.currentframe())
@@ -33,11 +33,11 @@ class UntitledTestCase(unittest.TestCase):
         
         driver = self.driver
         
-        login(self, "admin","suresoft")
+        li.login(self, "admin","suresoft")
         print("STEP 1 -- 프로젝트 검색 및 클릭")
         project_name = "TC_0031"
         
-        test_details += pi.project_essential_info(self, "GIT", "http://vpes@192.168.0.136:7990/scm/sprin/vpes.git", "vpes", "suresoft", project_name, "VPES_CAR")
+        test_details += pi.project_essential_info(self, "GIT", "http://vpes@192.168.0.136:7990/scm/sprin/vpes.git", "vpes", "suresoft", project_name, "V-SPICE_CAR")
         test_details += pi.project_process_info(self, True, False, True, True, True, False, True, True)# MAN, SUP8 제외
         test_details += pi.create_project(self)
         
@@ -137,7 +137,7 @@ class UntitledTestCase(unittest.TestCase):
 
 		
         data = '"' + tc_num + '"' + ',' + '"' + tc_content + '"' + ',' + '"' + test_result + '"' + ',' + '"' + test_details + '"'
-        command = 'echo ' + data + ' >> vpes_test_result.csv'
+        command = 'echo ' + data + ' >> vspice_test_result.csv'
         '''print(command)'''
         #os.system(command.encode(str('cp949')))
         os.system(command)

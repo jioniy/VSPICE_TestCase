@@ -8,12 +8,12 @@ from selenium.common.exceptions import NoAlertPresentException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC 
-from login import login
 from datetime import datetime, timedelta
 import unittest, time, re
 import os
 import inspect
 import project_info as pi
+import login_info as li
 
 tc_file = inspect.getfile(inspect.currentframe())
 tc_num = os.path.splitext(tc_file)[0]
@@ -21,7 +21,12 @@ tc_content = u"SYS 그룹의 SYS2 템플릿을 다운로드 받을 경우, 각 �
 
 class UntitledTestCase(unittest.TestCase):
     def setUp(self):
-        self.driver = webdriver.Chrome('./chromedriver')
+        #다운로드 경로 지정
+        prefs = {'savefile.default_directory':os.getcwd() + "\\downloads\\", 'download.default_directory':os.getcwd()+"\\downloads\\"}
+        options = webdriver.ChromeOptions()
+        options.add_experimental_option("prefs", prefs)
+        
+        self.driver = webdriver.Chrome('./chromedriver', chrome_options=options)
         self.driver.implicitly_wait(30)
         self.base_url = "https://www.google.com/"
         self.verificationErrors = []
@@ -38,15 +43,15 @@ class UntitledTestCase(unittest.TestCase):
         user_id = "admin"
         user_pw = "suresoft"
         
-        dir_path = u'C:\\Users\\대전회의실2\\Downloads\\' # 템플릿 파일 다운로드 경로
+        dir_path = os.path.dirname(os.path.realpath(__file__)) + "\\downloads\\" # 템플릿 파일 다운로드 경로
         
         print("STEP 1 -- 프로젝트 세팅")
         
         print("STEP 1-1 -- 사용자 로그인 및 프로젝트 등록")
-        login(self, user_id, user_pw)
+        li.login(self, user_id, user_pw)
         
         # 프로젝트 생성
-        test_details += pi.project_essential_info(self, "GIT", "http://vpes@192.168.0.136:7990/scm/sprin/vpes.git", "vpes", "suresoft", project_name, "VPES_CAR")
+        test_details += pi.project_essential_info(self, "GIT", "http://vpes@192.168.0.136:7990/scm/sprin/vpes.git", "vpes", "suresoft", project_name, "VSPICE_CAR")
         test_details += pi.create_project(self)
         
         time.sleep(2)
@@ -64,9 +69,11 @@ class UntitledTestCase(unittest.TestCase):
         
         # 의사소통 기록
         print("STEP 2-1 -- 의사소통 기록")
+        driver.execute_script("window.scrollTo(document.body.scrollWidth, 0);") 
+        time.sleep(1)
         driver.find_element_by_xpath("//div[@type='button']").click()
-        driver.find_element_by_xpath("//div[@id='processDetail-ReportVue']/div[2]/ul/li/div[5]/div/div[2]/div[5]/div[2]").click()
-        time.sleep(3)
+        driver.find_element_by_xpath("//div[@id='processDetail-ReportVue']/div[2]/ul/li/div[5]/div/div[2]/div[6]/div[2]").click()
+        time.sleep(7)
         
         file_path = max([dir_path + f for f in os.listdir(dir_path)], key=os.path.getctime) # 파일 경로 +  이름 (파일 생성 날짜가 제일 최근인 파일을 찾아서 반환)
         file_name = file_path.strip(dir_path) # 파일 이름
@@ -87,8 +94,9 @@ class UntitledTestCase(unittest.TestCase):
         # 변경 통제 기록
         print("STEP 2-2 -- 변경 통제 기록")
         driver.find_element_by_xpath("//div[@id='processDetail-ReportVue']/div[2]/ul/li[3]/div[5]/div/div").click()
-        driver.find_element_by_xpath("//div[@id='processDetail-ReportVue']/div[2]/ul/li[3]/div[5]/div/div[2]/div[5]/div[2]").click()
-        time.sleep(3)
+        time.sleep(1)
+        driver.find_element_by_xpath("//div[@id='processDetail-ReportVue']/div[2]/ul/li[3]/div[5]/div/div[2]/div[6]/div[2]").click()
+        time.sleep(7)
         
         file_path = max([dir_path + f for f in os.listdir(dir_path)], key=os.path.getctime) # 파일 경로 +  이름 (파일 생성 날짜가 제일 최근인 파일을 찾아서 반환)
         file_name = file_path.strip(dir_path) # 파일 이름
@@ -109,8 +117,9 @@ class UntitledTestCase(unittest.TestCase):
         # 분석 보고서
         print("STEP 2-3 -- 분석 보고서")
         driver.find_element_by_xpath("//div[@id='processDetail-ReportVue']/div[2]/ul/li[5]/div[5]/div/div").click()
-        driver.find_element_by_xpath("//div[@id='processDetail-ReportVue']/div[2]/ul/li[5]/div[5]/div/div[2]/div[5]/div[2]").click()
-        time.sleep(3)
+        time.sleep(1)
+        driver.find_element_by_xpath("//div[@id='processDetail-ReportVue']/div[2]/ul/li[5]/div[5]/div/div[2]/div[6]/div[2]").click()
+        time.sleep(7)
         
         file_path = max([dir_path + f for f in os.listdir(dir_path)], key=os.path.getctime) # 파일 경로 +  이름 (파일 생성 날짜가 제일 최근인 파일을 찾아서 반환)
         file_name = file_path.strip(dir_path) # 파일 이름
@@ -132,8 +141,9 @@ class UntitledTestCase(unittest.TestCase):
         # 시스템 요구사항 명세서
         print("STEP 2-4 -- 시스템 요구사항 명세서")
         driver.find_element_by_xpath("//div[@id='processDetail-ReportVue']/div[2]/ul/li[7]/div[5]/div/div").click()
-        driver.find_element_by_xpath("//div[@id='processDetail-ReportVue']/div[2]/ul/li[7]/div[5]/div/div[2]/div[5]/div[2]").click()
-        time.sleep(3)
+        time.sleep(1)
+        driver.find_element_by_xpath("//div[@id='processDetail-ReportVue']/div[2]/ul/li[7]/div[5]/div/div[2]/div[6]/div[2]").click()
+        time.sleep(7)
         
         file_path = max([dir_path + f for f in os.listdir(dir_path)], key=os.path.getctime) # 파일 경로 +  이름 (파일 생성 날짜가 제일 최근인 파일을 찾아서 반환)
         file_name = file_path.strip(dir_path) # 파일 이름
@@ -155,8 +165,9 @@ class UntitledTestCase(unittest.TestCase):
         # 검증 기준
         print("STEP 2-5 -- 검증 기준")
         driver.find_element_by_xpath("//div[@id='processDetail-ReportVue']/div[2]/ul/li[8]/div[5]/div/div").click()
-        driver.find_element_by_xpath("//div[@id='processDetail-ReportVue']/div[2]/ul/li[8]/div[5]/div/div[2]/div[5]/div[2]").click()
-        time.sleep(3)
+        time.sleep(1)
+        driver.find_element_by_xpath("//div[@id='processDetail-ReportVue']/div[2]/ul/li[8]/div[5]/div/div[2]/div[6]/div[2]").click()
+        time.sleep(7)
         
         file_path = max([dir_path + f for f in os.listdir(dir_path)], key=os.path.getctime) # 파일 경로 +  이름 (파일 생성 날짜가 제일 최근인 파일을 찾아서 반환)
         file_name = file_path.strip(dir_path) # 파일 이름
@@ -224,7 +235,7 @@ class UntitledTestCase(unittest.TestCase):
 
 		
         data = '"' + tc_num + '"' + ',' + '"' + tc_content + '"' + ',' + '"' + test_result + '"' + ',' + '"' + test_details + '"'
-        command = 'echo ' + data + ' >> vpes_test_result.csv'
+        command = 'echo ' + data + ' >> vspice_test_result.csv'
         '''print(command)'''
         #os.system(command.encode(str('cp949')))
         os.system(command)

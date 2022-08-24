@@ -10,8 +10,9 @@ from selenium.common.exceptions import NoAlertPresentException
 import unittest, time, re
 import os
 import inspect
-from login import login
+import login_info as li
 import project_info as pi
+import default_url
 
 tc_file = inspect.getfile(inspect.currentframe())
 tc_num = os.path.splitext(tc_file)[0]
@@ -31,7 +32,7 @@ class UntitledTestCase(unittest.TestCase):
         
         driver = self.driver
         
-        test_details += login(self, "admin","suresoft")
+        test_details += li.login(self, "admin","suresoft")
         
         test_details += pi.project_essential_info(self, "GIT", "http://vpes@192.168.0.136:7990/scm/sprin/vpes.git", "vpes", "suresoft", "TC_0011", "VPES_CAR")
         
@@ -76,6 +77,7 @@ class UntitledTestCase(unittest.TestCase):
         else:  # Python 3.2 - 3.3 or 3.0 - 3.1 and 2.7
             result = getattr(self, '_outcomeForDoCleanups', self._resultForDoCleanups)
         pi.delete_project(self, "TC_0011")
+        
         error = self.list2reason(result.errors)
         failure = self.list2reason(result.failures)
         ok = not error and not failure
@@ -89,7 +91,7 @@ class UntitledTestCase(unittest.TestCase):
 
   
         data = '"' + tc_num + '"' + ',' + '"' + tc_content + '"' + ',' + '"' + test_result + '"' + ',' + '"' + test_details + '"'
-        command = 'echo ' + data + ' >> vpes_test_result.csv'
+        command = 'echo ' + data + ' >> vspice_test_result.csv'
         '''print(command)'''
         #os.system(command.encode(str('cp949')))
         os.system(command)

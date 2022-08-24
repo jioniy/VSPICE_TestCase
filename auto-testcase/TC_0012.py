@@ -8,11 +8,10 @@ from selenium.common.exceptions import NoAlertPresentException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC 
-from login import login
+import login_info as li
 import unittest, time, re
 import os
 import inspect
-
 
 tc_file = inspect.getfile(inspect.currentframe())
 tc_num = os.path.splitext(tc_file)[0]
@@ -32,7 +31,7 @@ class UntitledTestCase(unittest.TestCase):
         
         driver = self.driver
         
-        login(self, "admin","suresoft")
+        li.login(self, "admin","suresoft")
 
         #프로젝트 등록 버튼
         driver.find_element_by_xpath("//div[@id='mainDashBoard-ProjectList_wrapper']/div/button/span").click()
@@ -56,7 +55,7 @@ class UntitledTestCase(unittest.TestCase):
         driver.find_element_by_id("projectCreate-scmPW").send_keys(scm_pw)
         time.sleep(1)
         #scm 인증
-        driver.find_element_by_xpath("//button[@id='projectCreate-scmAuthBtn']/div").click()
+        driver.find_element_by_id("projectCreate-scmAuthBtn").click()
         
         #ajax return 값 대기 
         wait = WebDriverWait(driver, 15)
@@ -191,7 +190,7 @@ class UntitledTestCase(unittest.TestCase):
 
 		
         data = '"' + tc_num + '"' + ',' + '"' + tc_content + '"' + ',' + '"' + test_result + '"' + ',' + '"' + test_details + '"'
-        command = 'echo ' + data + ' >> vpes_test_result.csv'
+        command = 'echo ' + data + ' >> vspice_test_result.csv'
         '''print(command)'''
         #os.system(command.encode(str('cp949')))
         os.system(command)

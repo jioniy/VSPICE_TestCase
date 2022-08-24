@@ -8,6 +8,7 @@ from selenium.common.exceptions import NoAlertPresentException
 import unittest, time, re
 import os
 import inspect
+import default_url
 
 tc_file = inspect.getfile(inspect.currentframe())
 tc_num = os.path.splitext(tc_file)[0]
@@ -26,12 +27,12 @@ class UntitledTestCase(unittest.TestCase):
         test_details = ''
         
         driver = self.driver
-        driver.get("http://localhost:38080/vspice/login")
+        driver.get(default_url.VSPICE_URL + "login")
         time.sleep(2)
         
         print("STEP 1 -- 회원가입 페이지 접속")
         driver.find_element_by_id("signUp").click()
-        driver.get("http://localhost:38080/vspice/UserRegister?")
+        driver.get(default_url.VSPICE_URL + "UserRegister?")
         time.sleep(2)
         
         print("STEP 2 -- 비밀번호 확인 검사")
@@ -99,7 +100,7 @@ class UntitledTestCase(unittest.TestCase):
 
 		
         data = '"' + tc_num + '"' + ',' + '"' + tc_content + '"' + ',' + '"' + test_result + '"' + ',' + '"' + test_details + '"'
-        command = 'echo ' + data + ' >> vpes_test_result.csv'
+        command = 'echo ' + data + ' >> vspice_test_result.csv'
         '''print(command)'''
         #os.system(command.encode(str('cp949')))
         os.system(command)

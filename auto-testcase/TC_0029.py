@@ -9,12 +9,12 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC 
 from selenium.webdriver.common.action_chains import ActionChains
-from login import login, logout, join, delete_user
 from datetime import datetime, timedelta
 import unittest, time, re
 import os
 import inspect
 import project_info as pi
+import login_info as li
 
 
 tc_file = inspect.getfile(inspect.currentframe())
@@ -40,7 +40,7 @@ class UntitledTestCase(unittest.TestCase):
         user_id = "admin"
         user_pw = "suresoft"
         
-        wm_user_id = "test_wm"
+        wm_user_id = "testwm"
         wm_user_name = u"홍길동"
         wm_user_email = "testwm@naver.com"
         wm_user_pw = "1q2w3e!!"
@@ -48,14 +48,14 @@ class UntitledTestCase(unittest.TestCase):
         
         print("STEP 1 -- 프로젝트 세팅")
         print("STEP 1-1 -- 담당자 테스트용 사용자 생성")
-        join(self, wm_user_id, wm_user_name, wm_user_email, wm_user_pw, wm_user_pw_ck)
+        test_details += li.join(self, wm_user_id, wm_user_name, wm_user_email, wm_user_pw, wm_user_pw_ck)
         
         print("STEP 1-2 -- 사용자 로그인 및 프로젝트 등록")
-        login(self, user_id, user_pw)
+        test_details += li.login(self, user_id, user_pw)
         
         # 프로젝트 생성
-        test_details += pi.project_essential_info(self, "GIT", "http://vpes@192.168.0.136:7990/scm/sprin/vpes.git", "vpes", "suresoft", project_name, "VPES_CAR")
-        test_details += pi.project_user_info(self, ["test_wm"])
+        test_details += pi.project_essential_info(self, "GIT", "http://vpes@192.168.0.136:7990/scm/sprin/vpes.git", "vpes", "suresoft", project_name, "VSPICE_CAR")
+        test_details += pi.project_user_info(self, ["testwm"])
         test_details += pi.create_project(self)
         
         time.sleep(2)
@@ -66,33 +66,35 @@ class UntitledTestCase(unittest.TestCase):
         time.sleep(3)
         
         print("STEP 2 -- WBS 작업 추가")
+        driver.execute_script("window.scrollTo(document.body.scrollWidth, 0);") 
+        time.sleep(2) 
         driver.find_element_by_xpath("//div[@id='ChartVue']/div/div[2]/button/div/div/img").click() # 작업 추가 버튼 클릭
-        time.sleep(1) 
+        time.sleep(3) 
         driver.find_element_by_xpath("//input[@type='text']").click()
         driver.find_element_by_xpath("//input[@type='text']").clear()
         driver.find_element_by_xpath("//input[@type='text']").send_keys("ACQ_WORK_0029") # 작업명 등록
-        time.sleep(1)
+        time.sleep(3)
         
         driver.find_element_by_xpath("//div[@id='wbsRegisterModal']/div/div/div[2]/div/div[2]/div[2]/div/div[2]/span").click()
         driver.find_element_by_xpath("//div[@id='wbsRegisterModal']/div/div/div[2]/div/div[2]/div[2]/div/div[3]/ul/li/span").click()# 프로세스 그룹 등록
-        time.sleep(1) 
+        time.sleep(3) 
         driver.find_element_by_xpath("//div[@id='wbsRegisterModal']/div/div/div[2]/div/div[4]/div[2]/div/div[2]").click()
-        driver.find_element_by_xpath("//div[@id='wbsRegisterModal']/div/div/div[2]/div/div[4]/div[2]/div/div[3]/ul/li/span/div").click() # 담당자(work manager) 등록
-        time.sleep(1) 
+        driver.find_element_by_xpath("//div[@id='wbsRegisterModal']/div/div/div[2]/div/div[4]/div[2]/div/div[3]/ul/li[1]/span/div").click() # 담당자(work manager) 등록
+        time.sleep(3) 
         # 일정 시작일 입력
         work_start_date_res = datetime.now()+timedelta(days=-10)
         work_start_date = work_start_date_res.strftime('%Y-%m-%d')
         driver.find_element_by_id("wbs-startDate").click()
         driver.find_element_by_id("wbs-startDate").clear()
-        time.sleep(1)
+        time.sleep(3)
         driver.find_element_by_id("wbs-startDate").send_keys(work_start_date)
-        time.sleep(2)
+        time.sleep(3)
         # 일정 종료일 입력
         work_end_date_res = datetime.now()+timedelta(days=10)
         work_end_date = work_end_date_res.strftime('%Y-%m-%d')
         driver.find_element_by_id("wbs-endDate").send_keys(work_end_date)
         driver.find_element_by_id("wbs-endDate").send_keys(Keys.ENTER)
-        time.sleep(2)
+        time.sleep(3)
         
         driver.find_element_by_xpath("//div[@id='wbsRegisterModal']/div/div/div[3]/div/div/button[2]").click() # 작업 등록 완료 
         
@@ -127,13 +129,15 @@ class UntitledTestCase(unittest.TestCase):
         driver.find_element_by_xpath("//input[@type='text']").click()
         driver.find_element_by_xpath("//input[@type='text']").clear()
         driver.find_element_by_xpath("//input[@type='text']").send_keys("MAN_WORK_0029")# 작업명 변경
-        time.sleep(1) 
+        time.sleep(3) 
         driver.find_element_by_xpath("//div[@id='wbsRegisterModal']/div/div/div[2]/div/div[2]/div[2]/div/div[2]/span").click()
+        time.sleep(2) 
         driver.find_element_by_xpath("//div[@id='wbsRegisterModal']/div/div/div[2]/div/div[2]/div[2]/div/div[3]/ul/li[2]/span").click() # 프로세스 그룹 변경
-        time.sleep(1) 
+        time.sleep(3) 
         driver.find_element_by_xpath("//div[@id='wbsRegisterModal']/div/div/div[2]/div/div[4]/div[2]/div/div[2]/span/div").click()
+        time.sleep(2) 
         driver.find_element_by_xpath("//div[@id='wbsRegisterModal']/div/div/div[2]/div/div[4]/div[2]/div/div[3]/ul/li[2]/span/div/span").click()# 담당자(work manager) 변경
-        time.sleep(1) 
+        time.sleep(3) 
         # 일정 시작일 입력
         work_start_date_res = datetime.now()+timedelta(days=10)
         work_start_date = work_start_date_res.strftime('%Y-%m-%d')
@@ -151,12 +155,12 @@ class UntitledTestCase(unittest.TestCase):
         
         driver.find_element_by_xpath("//input[@type='number']").clear()
         driver.find_element_by_xpath("//input[@type='number']").send_keys("2") # 공수 변경
-        
+        time.sleep(3) 
         driver.find_element_by_xpath("//div[@id='wbsRegisterModal']/div/div/div[2]/div/div[8]/div[2]/div/textarea").click()
         driver.find_element_by_xpath("//div[@id='wbsRegisterModal']/div/div/div[2]/div/div[8]/div[2]/div/textarea").click()
         driver.find_element_by_xpath("//div[@id='wbsRegisterModal']/div/div/div[2]/div/div[8]/div[2]/div/textarea").clear()
         driver.find_element_by_xpath("//div[@id='wbsRegisterModal']/div/div/div[2]/div/div[8]/div[2]/div/textarea").send_keys(u"작업 내용 수정") # 사유 입력
-        
+        time.sleep(3) 
         driver.find_element_by_xpath("//div[@id='wbsRegisterModal']/div/div/div[3]/div/div/button[3]").click()
         
         wait = WebDriverWait(driver, 10)
@@ -211,40 +215,39 @@ class UntitledTestCase(unittest.TestCase):
             driver.find_element_by_xpath("//*[@id='ChartVue']/div[2]/div/div/div[1]/div[1]/div/div[1]/div/div/div[2]/div[5]/div[6]/div/div/div/a/img").click()
             
             popover_id = driver.find_element_by_xpath("//*[@id='ChartVue']/div[2]/div/div/div[1]/div[1]/div/div[1]/div/div/div[2]/div[5]/div[6]/div/div/div/a").get_attribute("aria-describedby") #팝오버 창의 id 가져오기
-            print(popover_id)
+
             print("STEP 3 -- 작업 변경 내역 열람 SUCCESS")
-            if driver.find_element_by_xpath("//div[@id='" + popover_id + "']/div[2]/div/table/tbody/tr[2]/td[2]").text == u"홍길동\ntest_wm": # 변경 내용 담당자 확인
+            if driver.find_element_by_xpath("//div[@id='" + popover_id + "']/div[2]/div/table/tbody/tr[2]/td[2]").text == u"홍길동\ntestwm": # 변경 내용 담당자 확인
                 print("STEP 3 -- 작업 변경 내역 담당자 열람 SUCCESS")
             else:
                 print("STEP 3 -- 작업 변경 내역 담당자 열람 FAILED")
                 test_details += u"작업 담당자를 수정하였으나, 작업 변경 내역에서 수정된 작업 담당자가 반영되지 않음\n"
-            time.sleep(1) 
+            time.sleep(3)  
             if driver.find_element_by_xpath("//div[@id='" + popover_id + "']/div[2]/div/table/tbody/tr[2]/td[3]").text == "2 MD": # 변경 내용 공수 확인
                 print("STEP 3 -- 작업 변경 내역 공수 열람 SUCCESS")
             else:
                 print("STEP 3 -- 작업 변경 내역 공수 열람 FAILED")
                 test_details += u"작업 공수를 수정하였으나, 작업 변경 내역에서 수정된 작업 공수가 반영되지 않음\n"
-            time.sleep(1) 
+            time.sleep(3) 
             date_text = work_start_date + " - " + work_end_date
-            print(driver.find_element_by_xpath("//div[@id='" + popover_id + "']/div[2]/div/table/tbody/tr[2]/td[4]").text)
             if driver.find_element_by_xpath("//div[@id='" + popover_id + "']/div[2]/div/table/tbody/tr[2]/td[4]").text == date_text: # 변경 내용 일정 확인
                 print("STEP 3 -- 작업 변경 내역 일정 열람 SUCCESS")
             else:
                 print("STEP 3 -- 작업 변경 내역 일정 열람 FAILED")
                 test_details += u"작업 일정을 수정하였으나, 작업 변경 내역에서 수정된 작업 일정이 반영되지 않음\n"
-            time.sleep(1) 
+            time.sleep(3) 
             if driver.find_element_by_xpath("//div[@id='" + popover_id + "']/div[2]/div/table/tbody/tr[2]/td[5]").text == u"작업 내용 수정": # 변경 사유 확인
                 print("STEP 3 -- 작업 변경 내역 사유 열람 SUCCESS")
             else:
                 print("STEP 3 -- 작업 변경 내역 사유 열람 FAILED")
                 test_details += u"변경 사유를 입력하였으나, 작업 변경 내역에서 반영되지 않음\n"
-            time.sleep(1) 
+            time.sleep(3) 
             
         else: #작업 변경 내역 아이콘 없음
             print("STEP 3 -- 작업 변경 내역 아이콘 확인 FAILED")
             test_details += u"작업을 변경하였으나, 작업 변경 내역 아이콘을 볼 수 없음\n"
         time.sleep(2)
-    
+        
         if (test_details != ''):
             assert False
         
@@ -281,7 +284,7 @@ class UntitledTestCase(unittest.TestCase):
             result = getattr(self, '_outcomeForDoCleanups', self._resultForDoCleanups)
         
         pi.delete_project(self, "TC_0029")
-        delete_user(self, "test_wm")
+        li.delete_user(self, "testwm")
         
         error = self.list2reason(result.errors)
         failure = self.list2reason(result.failures)
@@ -296,7 +299,7 @@ class UntitledTestCase(unittest.TestCase):
 
 		
         data = '"' + tc_num + '"' + ',' + '"' + tc_content + '"' + ',' + '"' + test_result + '"' + ',' + '"' + test_details + '"'
-        command = 'echo ' + data + ' >> vpes_test_result.csv'
+        command = 'echo ' + data + ' >> vspice_test_result.csv'
         '''print(command)'''
         #os.system(command.encode(str('cp949')))
         os.system(command)

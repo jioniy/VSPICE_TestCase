@@ -8,12 +8,13 @@ from selenium.common.exceptions import NoAlertPresentException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC 
-from login import login, logout
 from datetime import datetime, timedelta
 import unittest, time, re
 import os
 import inspect
 import project_info as pi
+import login_info as li
+import default_url
 
 
 tc_file = inspect.getfile(inspect.currentframe())
@@ -42,9 +43,9 @@ class UntitledTestCase(unittest.TestCase):
         
         print("STEP 1 -- 프로젝트 세팅")
         print("STEP 1-1 -- 사용자 로그인 및 프로젝트 등록")
-        login(self, user_id, user_pw)
+        li.login(self, user_id, user_pw)
         
-        test_details += pi.project_essential_info(self, "GIT", "http://vpes@192.168.0.136:7990/scm/sprin/vpes.git", "vpes", "suresoft", project_name, "VPES_CAR")
+        test_details += pi.project_essential_info(self, "GIT", "http://vpes@192.168.0.136:7990/scm/sprin/vpes.git", "vpes", "suresoft", project_name, "V-SPICE_CAR")
         test_details += pi.create_project(self)
         time.sleep(2)
         
@@ -52,12 +53,15 @@ class UntitledTestCase(unittest.TestCase):
         pi.search_project(self, project_name)
         
         print("STEP 2 -- 프로세스 목록 별 페이지 전환")
+        driver.execute_script("window.scrollTo(document.body.scrollWidth, document.body.scrollHeight/4);") # 오른쪽 끝, 중간 높이로 이동
         element_list = driver.find_elements_by_xpath("//*[@id='projectOverView-ProjectStateVue']/div[2]/div[3]/div/div") # return element_list[0], element_list[1],...
         element_cnt = len(element_list)
         
         error_list = [] 
         
         for i in range(element_cnt):
+            driver.execute_script("window.scrollTo(document.body.scrollWidth, document.body.scrollHeight/4);") # 오른쪽 끝, 중간 높이로 이동
+            time.sleep(3)
             element_process_text = driver.find_element_by_xpath("//*[@id='projectOverView-ProjectStateVue']/div[2]/div[3]/div/div["+str(i+1)+"]/div[1]/div[2]").text
             driver.find_element_by_xpath("//*[@id='projectOverView-ProjectStateVue']/div[2]/div[3]/div/div["+str(i+1)+"]/div[1]/div[2]").click()
             time.sleep(3)
@@ -67,7 +71,7 @@ class UntitledTestCase(unittest.TestCase):
                 print("STEP 2 -- "+process_list[i]+" 카드 이름 불일치")
             else:
                 print("STEP 2 -- "+process_list[i]+" 카드 이름 일치")
-                expected_url = "http://localhost:38080/vspice/ProcessDetail/" + project_name + "/" + element_process_text[:3] + "/" + element_process_text.replace(".", "_",1)
+                expected_url = default_url.VSPICE_URL+ "ProcessDetail/" + project_name + "/" + element_process_text[:3] + "/" + element_process_text.replace(".", "_",1)
                 # 2. 프로세스 페이지 url 확인
                 if driver.current_url != expected_url: 
                     error_list.append(element_process_text)
@@ -141,7 +145,7 @@ class UntitledTestCase(unittest.TestCase):
 
 		
         data = '"' + tc_num + '"' + ',' + '"' + tc_content + '"' + ',' + '"' + test_result + '"' + ',' + '"' + test_details + '"'
-        command = 'echo ' + data + ' >> vpes_test_result.csv'
+        command = 'echo ' + data + ' >> vspice_test_result.csv'
         '''print(command)'''
         #os.system(command.encode(str('cp949')))
         os.system(command)

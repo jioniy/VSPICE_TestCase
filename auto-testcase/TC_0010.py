@@ -10,7 +10,8 @@ from selenium.common.exceptions import NoAlertPresentException
 import unittest, time, re
 import os
 import inspect
-from login import login, delete_user
+import login_info as li
+import default_url
 
 tc_file = inspect.getfile(inspect.currentframe())
 tc_num = os.path.splitext(tc_file)[0]
@@ -32,12 +33,12 @@ class UntitledTestCase(unittest.TestCase):
         
         driver = self.driver
         wait = WebDriverWait(driver, 600)
-        driver.get("http://localhost:38080/vspice/login")
+        driver.get(default_url.VSPICE_URL + "login")
         time.sleep(3)
 
         print("STEP 1 -- 회원가입 페이지 접속")
         driver.find_element_by_id("signUp").click()
-        driver.get("http://localhost:38080/vspice/UserRegister?")
+        driver.get(default_url.VSPICE_URL + "UserRegister?")
         time.sleep(3)
         
         print("STEP 2 -- 회원가입 버튼 활성화 검사")
@@ -119,10 +120,10 @@ class UntitledTestCase(unittest.TestCase):
         else:  # Python 3.2 - 3.3 or 3.0 - 3.1 and 2.7
             result = getattr(self, '_outcomeForDoCleanups', self._resultForDoCleanups)
         #로그인
-        login(self, "admin", "suresoft")
-        
+        li.login(self, "admin", "suresoft")
         #회원 삭제
-        delete_user(self, "test100")
+        li.delete_user(self, "test100")
+        
         error = self.list2reason(result.errors)
         failure = self.list2reason(result.failures)
         ok = not error and not failure
@@ -136,7 +137,7 @@ class UntitledTestCase(unittest.TestCase):
 
   
         data = '"' + tc_num + '"' + ',' + '"' + tc_content + '"' + ',' + '"' + test_result + '"' + ',' + '"' + test_details + '"'
-        command = 'echo ' + data + ' >> vpes_test_result.csv'
+        command = 'echo ' + data + ' >> vspice_test_result.csv'
         '''print(command)'''
         #os.system(command.encode(str('cp949')))
         os.system(command)

@@ -8,13 +8,12 @@ from selenium.common.exceptions import NoAlertPresentException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC 
-from login import login
 from datetime import datetime, timedelta
 import unittest, time, re
 import os
 import inspect
 import project_info as pi
-
+import login_info as li
 
 tc_file = inspect.getfile(inspect.currentframe())
 tc_num = os.path.splitext(tc_file)[0]
@@ -34,7 +33,7 @@ class UntitledTestCase(unittest.TestCase):
         
         driver = self.driver
         
-        login(self, "admin","suresoft")
+        li.login(self, "admin","suresoft")
         
         print("STEP 1 -- 기간이 만료된 테스트용 프로젝트 등록")
         project_name = "TC_0018"
@@ -46,7 +45,7 @@ class UntitledTestCase(unittest.TestCase):
         end_date_res = datetime.now()+timedelta(days=-15)
         end_date = end_date_res.strftime('%Y-%m-%d')
         
-        test_details += pi.project_essential_info(self, "GIT", "http://vpes@192.168.0.136:7990/scm/sprin/vpes.git", "vpes", "suresoft", project_name, "VPES_CAR", "2021-06-27", "2022-06-30")
+        test_details += pi.project_essential_info(self, "GIT", "http://vpes@192.168.0.136:7990/scm/sprin/vpes.git", "vpes", "suresoft", project_name, "V-SPICE_CAR", "2021-06-27", "2022-06-30")
         test_details += pi.create_project(self)
         
         print("STEP 2 -- 프로젝트 검색 및 클릭")
@@ -107,7 +106,7 @@ class UntitledTestCase(unittest.TestCase):
         else:  # Python 3.2 - 3.3 or 3.0 - 3.1 and 2.7
             result = getattr(self, '_outcomeForDoCleanups', self._resultForDoCleanups)
         
-        delete_project(self, "TC_0018")
+        pi.delete_project(self, "TC_0018")
         
         error = self.list2reason(result.errors)
         failure = self.list2reason(result.failures)
@@ -122,7 +121,7 @@ class UntitledTestCase(unittest.TestCase):
 
 		
         data = '"' + tc_num + '"' + ',' + '"' + tc_content + '"' + ',' + '"' + test_result + '"' + ',' + '"' + test_details + '"'
-        command = 'echo ' + data + ' >> vpes_test_result.csv'
+        command = 'echo ' + data + ' >> vspice_test_result.csv'
         '''print(command)'''
         #os.system(command.encode(str('cp949')))
         os.system(command)

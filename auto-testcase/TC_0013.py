@@ -8,11 +8,11 @@ from selenium.common.exceptions import NoAlertPresentException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC 
-from login import login
 import unittest, time, re
 import os
 import inspect
-
+import login_info as li
+import project_info as pi
 
 tc_file = inspect.getfile(inspect.currentframe())
 tc_num = os.path.splitext(tc_file)[0]
@@ -32,7 +32,11 @@ class UntitledTestCase(unittest.TestCase):
         
         driver = self.driver
         
-        login(self, "admin","suresoft")
+        li.login(self, "admin","suresoft")
+        
+        test_details += pi.project_essential_info(self, "GIT", "http://vpes@192.168.0.136:7990/scm/sprin/vpes.git", "vpes", "suresoft", "TC_0013", "VPES_CAR")
+        
+        test_details += pi.create_project(self)
 
         #프로젝트 등록 버튼
         driver.find_element_by_xpath("//div[@id='mainDashBoard-ProjectList_wrapper']/div/button/span").click()
@@ -41,8 +45,8 @@ class UntitledTestCase(unittest.TestCase):
         #프로젝트 키 입력
         driver.find_element_by_id("projectCreate-projectKey").click()
         driver.find_element_by_id("projectCreate-projectKey").clear()
-        driver.find_element_by_id("projectCreate-projectKey").send_keys('StudyTemplate')
-        time.sleep(1)
+        driver.find_element_by_id("projectCreate-projectKey").send_keys('TC_0013')
+        time.sleep(3)
         driver.find_element_by_id("projectCreate-duplicationBtn").click()
         wait = WebDriverWait(driver, 15)
         element_text=""
@@ -94,10 +98,11 @@ class UntitledTestCase(unittest.TestCase):
             self._feedErrorsToResult(result, self._outcome.errors)
         else:  # Python 3.2 - 3.3 or 3.0 - 3.1 and 2.7
             result = getattr(self, '_outcomeForDoCleanups', self._resultForDoCleanups)
+        pi.delete_project(self, "TC_0013")
         error = self.list2reason(result.errors)
         failure = self.list2reason(result.failures)
         ok = not error and not failure
-
+        
         if ok:
             test_result = 'SUCCESS'
         else:
@@ -107,7 +112,7 @@ class UntitledTestCase(unittest.TestCase):
 
 		
         data = '"' + tc_num + '"' + ',' + '"' + tc_content + '"' + ',' + '"' + test_result + '"' + ',' + '"' + test_details + '"'
-        command = 'echo ' + data + ' >> vpes_test_result.csv'
+        command = 'echo ' + data + ' >> vspice_test_result.csv'
         '''print(command)'''
         #os.system(command.encode(str('cp949')))
         os.system(command)

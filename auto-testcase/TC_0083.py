@@ -8,11 +8,11 @@ from selenium.common.exceptions import NoAlertPresentException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC 
-from login import login
 from datetime import datetime, timedelta
 import unittest, time, re
 import os
 import inspect
+import login_info as li
 import project_info as pi
 
 tc_file = inspect.getfile(inspect.currentframe())
@@ -50,8 +50,8 @@ class UntitledTestCase(unittest.TestCase):
         swe5_file_name_list = [u"SWE5_08-50_시험 명세서.xlsx",u"SWE5_08-52_시험 계획서.docx"]
         swe6_file_name_list = [u"SWE6_08-50_시험 명세서.xlsx",u"SWE6_08-52_시험 계획서.docx"]
         
-        sys_file_path = u"D:\\auto-testcase\\wp_template\\SYS\\order\\"
-        swe_file_path = u"D:\\auto-testcase\\wp_template\\SWE\\order\\"
+        sys_file_path = os.path.dirname(os.path.realpath(__file__)) + u"\\wp_template\\SYS\\order\\"
+        swe_file_path = os.path.dirname(os.path.realpath(__file__)) + u"\\wp_template\\SWE\\order\\"
         process_list = ["SYS2", "SYS3", "SWE1", "SWE2", "SWE3", "SWE4", "SWE5", "SWE6", "SYS4", "SYS5"] 
         process_card_icon_xpath_list = ["//*[@id='sysProcessGroupArea']/div/div[3]/div[1]/div[2]/div[1]/div[2]",# SYS2
                                         "//*[@id='sysProcessGroupArea']/div/div[4]/div[1]/div[2]/div[1]/div[2]",# SYS3
@@ -67,10 +67,10 @@ class UntitledTestCase(unittest.TestCase):
         
         print("STEP 1 -- 프로젝트 세팅")
         print("STEP 1-1 -- 사용자 로그인 및 프로젝트 등록")
-        login(self, user_id, user_pw)
+        li.login(self, user_id, user_pw)
         
         # 프로젝트 생성
-        test_details += pi.project_essential_info(self, "GIT", "http://vpes@192.168.0.136:7990/scm/sprin/vpes.git", "vpes", "suresoft", project_name, "VPES_CAR")
+        test_details += pi.project_essential_info(self, "GIT", "http://vpes@192.168.0.136:7990/scm/sprin/vpes.git", "vpes", "suresoft", project_name, "V-SPICE_CAR")
         test_details += pi.create_project(self)
         
         time.sleep(2)
@@ -83,9 +83,13 @@ class UntitledTestCase(unittest.TestCase):
         driver.find_element_by_id("sys").click()# SYS 프로세스 그룹 접속
         time.sleep(3)
         
+        
         print("STEP 2-1 -- SYS2 시스템 요구사항 명세서 등록")
         driver.find_element_by_link_text("SYS.2 0/8").click()
         time.sleep(2)
+        driver.execute_script("window.scrollTo(document.body.scrollWidth, 0);") 
+        time.sleep(1)
+        
         if self.upload_work_file_in_process(7, sys_file_path + sys2_file_name) == True:
             print("STEP 2-1 -- SUCCESS")
         else:
@@ -96,6 +100,8 @@ class UntitledTestCase(unittest.TestCase):
         print("STEP 2-2 -- SYS3 시스템 아키텍쳐 설계서 등록")
         driver.find_element_by_link_text("SYS.3 0/5").click()
         time.sleep(2)
+        driver.execute_script("window.scrollTo(document.body.scrollWidth, 0);") 
+        time.sleep(1)
         if self.upload_work_file_in_process(1, sys_file_path + sys3_file_name) == True:
             print("STEP 2-2 -- SUCCESS")
         else:
@@ -108,6 +114,8 @@ class UntitledTestCase(unittest.TestCase):
         time.sleep(3)
         driver.find_element_by_link_text("SWE.1 0/8").click()
         time.sleep(2)
+        driver.execute_script("window.scrollTo(document.body.scrollWidth, 0);") 
+        time.sleep(1)
         if self.upload_work_file_in_process(7, swe_file_path + swe1_file_name) == True:
             print("STEP 2-3 -- SUCCESS")
         else:
@@ -119,6 +127,8 @@ class UntitledTestCase(unittest.TestCase):
         print("STEP 2-4 -- SWE2 소프트웨어 아키텍쳐 설계서 등록")
         driver.find_element_by_link_text("SWE.2 0/5").click()
         time.sleep(2)
+        driver.execute_script("window.scrollTo(document.body.scrollWidth, 0);") 
+        time.sleep(1)
         if self.upload_work_file_in_process(1, swe_file_path + swe2_file_name) == True:
             print("STEP 2-4 -- SUCCESS")
         else:
@@ -130,6 +140,8 @@ class UntitledTestCase(unittest.TestCase):
         print("STEP 2-5 -- SWE3 소프트웨어 상세 설계서 등록")
         driver.find_element_by_link_text("SWE.3 0/5").click()
         time.sleep(2)
+        driver.execute_script("window.scrollTo(document.body.scrollWidth, 0);") 
+        time.sleep(1)
         if self.upload_work_file_in_process(1, swe_file_path + swe3_file_name) == True:
             print("STEP 2-5 -- SUCCESS")
         else:
@@ -141,6 +153,8 @@ class UntitledTestCase(unittest.TestCase):
         print("STEP 2-6 -- SWE4 시험 명세서 / 시험 계획서 등록")
         driver.find_element_by_link_text("SWE.4 0/8").click()
         time.sleep(2)
+        driver.execute_script("window.scrollTo(document.body.scrollWidth, 0);") 
+        time.sleep(1)
         if self.upload_work_file_in_process(1, swe_file_path + swe4_file_name_list[0]) == True:
             print("STEP 2-6 -- 시험 명세서 SUCCESS")
         else:
@@ -158,6 +172,8 @@ class UntitledTestCase(unittest.TestCase):
         print("STEP 2-7 -- SWE5 시험 명세서 / 시험 계획서 등록")
         driver.find_element_by_link_text("SWE.5 0/9").click()
         time.sleep(2)
+        driver.execute_script("window.scrollTo(document.body.scrollWidth, 0);") 
+        time.sleep(1)
         if self.upload_work_file_in_process(3, swe_file_path + swe5_file_name_list[0]) == True:
             print("STEP 2-7 -- 시험 명세서 SUCCESS")
         else:
@@ -175,6 +191,8 @@ class UntitledTestCase(unittest.TestCase):
         print("STEP 2-8 -- SWE6 시험 명세서 / 시험 계획서 등록")
         driver.find_element_by_link_text("SWE.6 0/7").click()
         time.sleep(2)
+        driver.execute_script("window.scrollTo(document.body.scrollWidth, 0);") 
+        time.sleep(1)
         if self.upload_work_file_in_process(1, swe_file_path + swe6_file_name_list[0]) == True:
             print("STEP 2-8 -- 시험 명세서 SUCCESS")
         else:
@@ -194,6 +212,8 @@ class UntitledTestCase(unittest.TestCase):
         time.sleep(3)
         driver.find_element_by_link_text("SYS.4 0/7").click()
         time.sleep(2)
+        driver.execute_script("window.scrollTo(document.body.scrollWidth, 0);") 
+        time.sleep(1)
         if self.upload_work_file_in_process(1, sys_file_path + sys4_file_name_list[0]) == True:
             print("STEP 2-9 -- 시험 명세서 SUCCESS")
         else:
@@ -211,6 +231,8 @@ class UntitledTestCase(unittest.TestCase):
         print("STEP 2-10 -- SYS5 작업 산출물 등록")
         driver.find_element_by_link_text("SYS.5 0/6").click()
         time.sleep(2)
+        driver.execute_script("window.scrollTo(document.body.scrollWidth, 0);") 
+        time.sleep(1)
         if self.upload_work_file_in_process(1, sys_file_path + sys5_file_name_list[0]) == True:
             print("STEP 2-10 -- 시험 명세서 SUCCESS")
         else:
@@ -314,7 +336,7 @@ class UntitledTestCase(unittest.TestCase):
 
 		
         data = '"' + tc_num + '"' + ',' + '"' + tc_content + '"' + ',' + '"' + test_result + '"' + ',' + '"' + test_details + '"'
-        command = 'echo ' + data + ' >> vpes_test_result.csv'
+        command = 'echo ' + data + ' >> vspice_test_result.csv'
         '''print(command)'''
         #os.system(command.encode(str('cp949')))
         os.system(command)

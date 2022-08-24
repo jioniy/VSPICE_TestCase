@@ -8,11 +8,11 @@ from selenium.common.exceptions import NoAlertPresentException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC 
-from login import login
 from datetime import datetime, timedelta
 import unittest, time, re
 import os
 import inspect
+import login_info as li
 import project_info as pi
 
 tc_file = inspect.getfile(inspect.currentframe())
@@ -38,18 +38,18 @@ class UntitledTestCase(unittest.TestCase):
         user_id = "admin"
         user_pw = "suresoft"
         
-        file_name_1 = "SYS4_08-50_시험 명세서.xlsx"
-        file_name_2 = "SYS4_08-52_시험 계획서.docx"
-        file_name_3 = "SYS4_11-06_시스템.docx"
-        file_path = u"D:\\auto-testcase\\wp_template\\SYS\\"
+        file_name_1 = u"SYS4_08-50_시험 명세서.xlsx"
+        file_name_2 = u"SYS4_08-52_시험 계획서.docx"
+        file_name_3 = u"SYS4_11-06_시스템.docx"
+        file_path = os.path.dirname(os.path.realpath(__file__)) + u"\\wp_template\\SYS\\"
         
         print("STEP 1 -- 프로젝트 세팅")
         
         print("STEP 1-1 -- 사용자 로그인 및 프로젝트 등록")
-        login(self, user_id, user_pw)
+        li.login(self, user_id, user_pw)
         
         # 프로젝트 생성
-        test_details += pi.project_essential_info(self, "GIT", "http://vpes@192.168.0.136:7990/scm/sprin/vpes.git", "vpes", "suresoft", project_name, "VPES_CAR")
+        test_details += pi.project_essential_info(self, "GIT", "http://vpes@192.168.0.136:7990/scm/sprin/vpes.git", "vpes", "suresoft", project_name, "V-SPICE_CAR")
         test_details += pi.create_project(self)
         
         time.sleep(2)
@@ -64,6 +64,8 @@ class UntitledTestCase(unittest.TestCase):
         time.sleep(3)
         driver.find_element_by_link_text("SYS.4 0/7").click()
         time.sleep(2)
+        driver.execute_script("window.scrollTo(document.body.scrollWidth, 0);") 
+        time.sleep(1)
         
        # 작업 산출물 등록 - 시험 명세서
         print("STEP 2-1 -- SYS4 시험 명세서 등록")
@@ -221,7 +223,7 @@ class UntitledTestCase(unittest.TestCase):
 
 		
         data = '"' + tc_num + '"' + ',' + '"' + tc_content + '"' + ',' + '"' + test_result + '"' + ',' + '"' + test_details + '"'
-        command = 'echo ' + data + ' >> vpes_test_result.csv'
+        command = 'echo ' + data + ' >> vspice_test_result.csv'
         '''print(command)'''
         #os.system(command.encode(str('cp949')))
         os.system(command)

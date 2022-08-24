@@ -8,13 +8,12 @@ from selenium.common.exceptions import NoAlertPresentException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC 
-from login import login, logout, join, delete_user
 from datetime import datetime, timedelta
 import unittest, time, re
 import os
 import inspect
+import login_info as li
 import project_info as pi
-
 
 tc_file = inspect.getfile(inspect.currentframe())
 tc_num = os.path.splitext(tc_file)[0]
@@ -50,8 +49,8 @@ class UntitledTestCase(unittest.TestCase):
         
         # ROLE_NORMAL 사용자 2명 만들기
         print("STEP 0 -- 테스트용 일반 사용자 생성")
-        test_details += join(self, pm_user_id, "김영희", "test1@naver.com", pm_user_pw, pm_user_pw)
-        test_details += join(self, general_user_id, "김철수", "test2@naver.com", general_user_pw, general_user_pw)
+        test_details += li.join(self, pm_user_id, "김영희", "test1@naver.com", pm_user_pw, pm_user_pw)
+        test_details += li.join(self, general_user_id, "김철수", "test2@naver.com", general_user_pw, general_user_pw)
         
         # 프로젝트 추가 사용자 이름
         user_list = []
@@ -59,9 +58,9 @@ class UntitledTestCase(unittest.TestCase):
         user_list.append(admin_user_id)
         
         print("STEP 1 -- PM 사용자 로그인 및 프로젝트 등록")
-        login(self, pm_user_id, pm_user_pw)
+        li.login(self, pm_user_id, pm_user_pw)
         
-        test_details += pi.project_essential_info(self, "GIT", "http://vpes@192.168.0.136:7990/scm/sprin/vpes.git", "vpes", "suresoft", project_name, "VPES_CAR")
+        test_details += pi.project_essential_info(self, "GIT", "http://vpes@192.168.0.136:7990/scm/sprin/vpes.git", "vpes", "suresoft", project_name, "V-SPICE_CAR")
         test_details += pi.project_user_info(self, user_list)
         test_details += pi.create_project(self)
         
@@ -91,10 +90,10 @@ class UntitledTestCase(unittest.TestCase):
         time.sleep(3)
         
         print("STEP 2-3 -- PM 사용자 로그아웃")
-        logout(self)
+        li.logout(self)
         
         print("STEP 3 -- 일반 사용자인 경우")
-        login(self, general_user_id, general_user_pw)
+        li.login(self, general_user_id, general_user_pw)
         print("STEP 3-1 -- 프로젝트 검색 및 클릭")
         #프로젝트 이름 검색
         driver.find_element_by_xpath("//div[@id='mainDashBoard-ProjectList_filter']/label/input").click()
@@ -118,11 +117,11 @@ class UntitledTestCase(unittest.TestCase):
         except Exception as e:
             print("STEP 3-2 -- SUCCESS")
         time.sleep(3)
-        logout(self)
+        li.logout(self)
         
         
         print("STEP 4 -- 사용자가 ADMIN 인 경우")
-        login(self, admin_user_id, admin_user_pw)
+        li.login(self, admin_user_id, admin_user_pw)
         print("STEP 4-1 -- 프로젝트 검색 및 클릭")
         #프로젝트 이름 검색
         driver.find_element_by_xpath("//div[@id='mainDashBoard-ProjectList_filter']/label/input").click()
@@ -189,9 +188,9 @@ class UntitledTestCase(unittest.TestCase):
         pi.delete_project(self, "TC_0020")
         
         # 테스트용 사용자 삭제
-        login(self, "admin", "suresoft")
-        delete_user(self, "tc20pm")
-        delete_user(self, "tc20general")
+        li.login(self, "admin", "suresoft")
+        li.delete_user(self, "tc20pm")
+        li.delete_user(self, "tc20general")
         
         if ok:
             test_result = 'SUCCESS'
@@ -202,7 +201,7 @@ class UntitledTestCase(unittest.TestCase):
 
 		
         data = '"' + tc_num + '"' + ',' + '"' + tc_content + '"' + ',' + '"' + test_result + '"' + ',' + '"' + test_details + '"'
-        command = 'echo ' + data + ' >> vpes_test_result.csv'
+        command = 'echo ' + data + ' >> vspice_test_result.csv'
         '''print(command)'''
         #os.system(command.encode(str('cp949')))
         os.system(command)

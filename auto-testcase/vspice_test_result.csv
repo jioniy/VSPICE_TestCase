@@ -1,0 +1,2 @@
+"TestCase","TestContent","TestResult","Details" 
+"TC_0003","회원가입 시 아이디가 중복일 경우 '아이디가 이미 존재합니다.'라는 문구가 출력되어야 한다.","SUCCESS","" 

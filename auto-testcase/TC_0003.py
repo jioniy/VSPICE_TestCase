@@ -8,6 +8,8 @@ from selenium.common.exceptions import NoAlertPresentException
 import unittest, time, re
 import os
 import inspect
+import login_info as li
+import default_url
 
 tc_file = inspect.getfile(inspect.currentframe())
 tc_num = os.path.splitext(tc_file)[0]
@@ -26,12 +28,16 @@ class UntitledTestCase(unittest.TestCase):
         test_details = ''
         
         driver = self.driver
-        driver.get("http://localhost:38080/vspice/login")
+        
+        print("STEP 0 -- 기존 사용자 등록")
+        test_details += li.join(self, "test1", u"홍길동", "test1@naver.com", "1q2w3e!!", "1q2w3e!!") # 테스트용 사용자(기존 사용자 역할) 가입
+        
+        driver.get( default_url.VSPICE_URL + "login" )
         time.sleep(3)
         
         print("STEP 1 -- 회원가입 페이지 접속")
         driver.find_element_by_id("signUp").click()
-        driver.get("http://localhost:38080/vspice/UserRegister?")
+        driver.get( default_url.VSPICE_URL + "UserRegister?" )
         time.sleep(3)
         
         print("STEP 2 -- 아이디 중복 검사")
@@ -44,7 +50,10 @@ class UntitledTestCase(unittest.TestCase):
         element=driver.find_element_by_xpath("/html/body/div[1]/div/div/div/div[3]/div[1]/div[1]/div[2]/div").text
         if(element!=u"아이디가 이미 존재합니다."):
             test_details = u"아이디가 이미 존재하지만 메세지가 출력이 되지 않음."
+            print("STEP 2 -- FAILED")
             assert False
+        else:
+            print("STEP 2 -- SUCCESS")
         
         
     def is_element_present(self, how, what):
@@ -82,16 +91,19 @@ class UntitledTestCase(unittest.TestCase):
         failure = self.list2reason(result.failures)
         ok = not error and not failure
         
+        # 테스트용 사용자 삭제
+        li.login(self, "admin", "suresoft")
+        li.delete_user(self, "test1")
+        
         if ok:
             test_result = 'SUCCESS'
         else:
             test_result = 'FAILURE'
             typ, text = ('ERROR', error) if error else ('FAIL', failure)
             text = text.replace('\"', '\'')
-
-		
+        
         data = '"' + tc_num + '"' + ',' + '"' + tc_content + '"' + ',' + '"' + test_result + '"' + ',' + '"' + test_details + '"'
-        command = 'echo ' + data + ' >> vpes_test_result.csv'
+        command = 'echo ' + data + ' >> vspice_test_result.csv'
         '''print(command)'''
         #os.system(command.encode(str('cp949')))
         os.system(command)

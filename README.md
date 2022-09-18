@@ -1,6 +1,6 @@
 # 💻 VSPICE_TestCase
-VSPICE 제품 테스트 자동화
-<br/><br/>
+VSPICE 제품 테스트 자동화  <br/>
+[📜 테스트 케이스 목록](https://drive.google.com/file/d/1xopQyCPH2cQA1XT6XGRGrHwmCTnyn7l0/view?usp=sharing)<br/><br/>
 [👩‍🏫 활동 보고 자료](https://drive.google.com/file/d/1hvkVZa1wwP_K94El4lKgeYbCwqxcPfum/view?usp=sharing)
 <br/>
 <p align='center'><img src="https://user-images.githubusercontent.com/68148196/190083592-4f09fdf6-febc-49f2-9730-9e332aee5d6c.png" width="800px" height="450px"/></p><br/>
